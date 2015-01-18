@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'edu.cmu.sphinx:sphinx4-core:1.0-SNAPSHOT'
+}
