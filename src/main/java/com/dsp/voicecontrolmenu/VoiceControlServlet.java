@@ -1,5 +1,9 @@
 package com.dsp.voicecontrolmenu;
 
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.LiveSpeechRecognizer;
+import edu.cmu.sphinx.api.SpeechResult;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -7,41 +11,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Aleksander on 2015-01-17.
  */
 @WebServlet(urlPatterns = "/voice-control-menu", asyncSupported = true, loadOnStartup = 1)
 public class VoiceControlServlet extends HttpServlet {
-    private ExecutorService executorService;
-
-    private String oldV = "";
-    private String newV = "";
+    private LiveSpeechRecognizer recognizer;
 
     @Override
     public void init() throws ServletException {
-        executorService = Executors.newSingleThreadExecutor();
+        Configuration configuration = new Configuration();
 
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    for (int i = 1; i <= 1000; i++) {
-                        if (i == 300 || i == 100) {
-                            oldV = newV;
-                            newV = String.valueOf(i);
-                        }
-                    }
-                }
-            }
-        });
+        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        configuration.setDictionaryPath("resource:/dictionary/numbers.dict");
+        configuration.setGrammarPath("resource:/grammar");
+        configuration.setGrammarName("numbers");
+        configuration.setUseGrammar(true);
+
+        try {
+            recognizer = new LiveSpeechRecognizer(configuration);
+        } catch (IOException e) {
+            throw new ServletException(e);
+        }
+
+        recognizer.startRecognition(true);
     }
 
     @Override
     public void destroy() {
-        executorService.shutdown();
+        recognizer.stopRecognition();
     }
 
     @Override
@@ -52,14 +51,11 @@ public class VoiceControlServlet extends HttpServlet {
 
         PrintWriter printWriter = resp.getWriter();
 
-        while (true) {
-            printWriter.print("data: " + newV + " old " + oldV + "\n\n");
+        SpeechResult result;
+
+        while ((result = recognizer.getResult()) != null) {
+            printWriter.print("data: " + result.getHypothesis() + "\n\n");
             printWriter.flush();
-            try {
-                Thread.currentThread().sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 

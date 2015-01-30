@@ -1,0 +1,14 @@
+#JSGF V1.0;
+/******************************
+Grammar generated automatically
+******************************/
+
+grammar numbers;
+
+public <number> = jeden
+| dwa
+| trzy
+| cztery
+| piec
+| szesc
+;
