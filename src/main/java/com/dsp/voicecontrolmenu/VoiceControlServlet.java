@@ -23,7 +23,7 @@ public class VoiceControlServlet extends HttpServlet {
     public void init() throws ServletException {
         Configuration configuration = new Configuration();
 
-        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        configuration.setAcousticModelPath("resource:/cmusphinx-5prealpha-en-us-2.0");
         configuration.setDictionaryPath("resource:/dictionary/numbers.dict");
         configuration.setGrammarPath("resource:/grammar");
         configuration.setGrammarName("numbers");
@@ -51,11 +51,12 @@ public class VoiceControlServlet extends HttpServlet {
 
         PrintWriter printWriter = resp.getWriter();
 
-        SpeechResult result;
-
-        while ((result = recognizer.getResult()) != null) {
-            printWriter.print("data: " + result.getHypothesis() + "\n\n");
-            printWriter.flush();
+        while (true) {
+            SpeechResult result = recognizer.getResult();
+            if (result != null) {
+                printWriter.print("data: " + result.getHypothesis() + "\n\n");
+                printWriter.flush();
+            }
         }
     }
 
