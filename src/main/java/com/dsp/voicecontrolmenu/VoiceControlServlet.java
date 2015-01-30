@@ -11,13 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Aleksander on 2015-01-17.
  */
 @WebServlet(urlPatterns = "/voice-control-menu", asyncSupported = true, loadOnStartup = 1)
 public class VoiceControlServlet extends HttpServlet {
+    private final ExecutorService service = Executors.newSingleThreadExecutor();
+
     private LiveSpeechRecognizer recognizer;
+    private volatile SpeechResult result;
 
     @Override
     public void init() throws ServletException {
@@ -36,11 +41,19 @@ public class VoiceControlServlet extends HttpServlet {
         }
 
         recognizer.startRecognition(true);
+
+        service.execute(new Runnable() {
+            @Override
+            public void run() {
+                while ((result = recognizer.getResult()) != null) ;
+            }
+        });
     }
 
     @Override
     public void destroy() {
         recognizer.stopRecognition();
+        service.shutdownNow();
     }
 
     @Override
@@ -51,11 +64,14 @@ public class VoiceControlServlet extends HttpServlet {
 
         PrintWriter printWriter = resp.getWriter();
 
-        while (true) {
-            SpeechResult result = recognizer.getResult();
-            if (result != null) {
-                printWriter.print("data: " + result.getHypothesis() + "\n\n");
-                printWriter.flush();
+        while (result != null) {
+            printWriter.print("data: " + result.getHypothesis() + "\n\n");
+            printWriter.flush();
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
