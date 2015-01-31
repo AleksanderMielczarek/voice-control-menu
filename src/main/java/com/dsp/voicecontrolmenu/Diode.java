@@ -10,10 +10,10 @@ import java.util.Map;
  * Created by Aleksander on 2015-01-31.
  */
 public enum Diode {
-    DIODE_1("jeden", "ledB"),
-    DIODE_2("dwa", "led1"),
-    DIODE_3("trzy", "led2"),
-    DIODE_4("cztery", "led3"),;
+    DIODE_1("one", "ledB"),
+    DIODE_2("two", "led1"),
+    DIODE_3("three", "led2"),
+    DIODE_4("four", "led3"),;
 
     private static final String PATH = "/sys/class/leds/";
     private static final String BRIGHTNESS = "/brightness";

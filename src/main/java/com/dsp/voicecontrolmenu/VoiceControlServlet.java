@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  */
 @WebServlet(urlPatterns = "/voice-control-menu", asyncSupported = true, loadOnStartup = 1)
 public class VoiceControlServlet extends HttpServlet {
-    private static final Set<String> availableCommands = Sets.newHashSet("jeden", "dwa", "trzy", "cztery", "piec", "szesc");
+    private static final Set<String> availableCommands = Sets.newHashSet("one", "two", "three", "four", "five", "six");
 
     private static final String MODEL_PATH = "resource:/cmusphinx-5prealpha-en-us-2.0";
     private static final String DICTIONARY_PATH = "resource:/dictionary/numbers.dict";

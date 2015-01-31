@@ -5,10 +5,10 @@ Grammar generated automatically
 
 grammar numbers;
 
-public <number> = jeden
-| dwa
-| trzy
-| cztery
-| piec
-| szesc
+public <number> = one
+| two
+| three
+| four
+| five
+| six
 ;
