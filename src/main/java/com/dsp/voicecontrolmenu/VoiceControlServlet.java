@@ -34,7 +34,7 @@ public class VoiceControlServlet extends HttpServlet {
     private static final String CONNECTION_VALUE = "keep-alive";
     private static final String DATA_PREFIX = "data: ";
     private static final String DATA_SUFFIX = "\n\n";
-    private static final int SLEEP_TIME = 500;
+    private static final int SLEEP_TIME = 50;
 
     private final ExecutorService service = Executors.newSingleThreadExecutor();
 
@@ -119,8 +119,11 @@ public class VoiceControlServlet extends HttpServlet {
         PrintWriter printWriter = resp.getWriter();
 
         while (result != null) {
-            printWriter.print(DATA_PREFIX + result.getHypothesis() + DATA_SUFFIX);
-            printWriter.flush();
+            String command = result.getHypothesis();
+            if (availableCommands.contains(command)) {
+                printWriter.print(DATA_PREFIX + command + DATA_SUFFIX);
+                printWriter.flush();
+            }
 
             try {
                 Thread.sleep(SLEEP_TIME);
