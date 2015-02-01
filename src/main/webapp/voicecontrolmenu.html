@@ -2,19 +2,54 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>OMAP interface</title>
+    <link rel="stylesheet" type="text/css" href="css/mainPage.css">
 </head>
 <body>
-<h>Voice Control Menu</h>
-<div id="receive">Receive text:</div>
-<div id="text"/>
+    <div id="headerDiv">
+        <h1>DevKit Interface</h1>
+    </div>
+
+    <div id="container">
+        <h2>Wybierz zdjęcie:</h2>
+        <div class="imageCon" id="one">
+            <img src="resources/landscape1.jpg">
+            <h2 class="imgLabels">1</h2>
+        </div>
+        <div class="imageCon" id="two">
+            <img src="resources/landscape2.jpg">
+            <h2 class="imgLabels">2</h2>
+        </div>
+        <div class="imageCon" id="three">
+            <img src="resources/landscape3.jpg">
+            <h2 class="imgLabels">3</h2>
+        </div>
+        <div class="imageCon" id="four">
+            <img src="resources/landscape4.jpg">
+            <h2 class="imgLabels">4</h2>
+        </div>
+        <div class="imageCon" id="five">
+            <img src="resources/landscape5.jpg">
+            <h2 class="imgLabels">5</h2>
+        </div>
+        <div class="imageCon" id="six">
+            <img src="resources/landscape6.jpg">
+            <h2 class="imgLabels">6</h2>
+        </div>
+    </div>
 </body>
 <script>
     if (typeof (EventSource) !== "undefined") {
         var source = new EventSource("/voice-control-menu/voice-control-menu");
+        var selectedImage;
         source.onmessage = function (event) {
-            document.getElementById("receive").innerHTML += event.data
-            + "<br><br>";
+            if (document.getElementById(event.data.toString()) !== selectedImage) {
+                if (selectedImage !== undefined) {
+                    selectedImage.className = "imageCon";
+                }
+                selectedImage = document.getElementById(event.data.toString());
+                selectedImage.className += " " + "selected";
+            }
         };
     } else {
         document.getElementById("receive").innerHTML = "Sorry, your browser does not support server-sent events...";
