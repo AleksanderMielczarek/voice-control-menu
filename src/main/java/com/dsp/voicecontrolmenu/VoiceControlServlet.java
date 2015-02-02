@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 @WebServlet(urlPatterns = "/voice-control-menu", asyncSupported = true, loadOnStartup = 1)
 public class VoiceControlServlet extends HttpServlet {
     private static final Set<String> availableCommands = Sets.newHashSet("one", "two", "three", "four", "five", "six");
+    private static final String UNRECOGNIZED_COMMAND = "unrecognized";
 
     private static final String MODEL_PATH = "resource:/cmusphinx-5prealpha-en-us-2.0";
     private static final String DICTIONARY_PATH = "resource:/dictionary/numbers.dict";
@@ -120,10 +121,12 @@ public class VoiceControlServlet extends HttpServlet {
 
         while (result != null) {
             String command = result.getHypothesis();
-            if (availableCommands.contains(command)) {
-                printWriter.print(DATA_PREFIX + command + DATA_SUFFIX);
-                printWriter.flush();
+            if (!availableCommands.contains(command)) {
+                command = UNRECOGNIZED_COMMAND;
             }
+
+            printWriter.print(DATA_PREFIX + command + DATA_SUFFIX);
+            printWriter.flush();
 
             try {
                 Thread.sleep(SLEEP_TIME);
